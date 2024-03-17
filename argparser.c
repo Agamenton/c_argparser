@@ -26,7 +26,7 @@ char* program_name = NULL;
 
 
 opt_c_argument optional_arguments[127] = {
-        { .short_name = "-h", .long_name = "--help", .type = ARG_BOOL, .value = (arg_value) { .b = FALSE }, .help = "Show this help message" },
+        { .short_name = "h", .long_name = "help", .type = ARG_BOOL, .value = (arg_value) { .b = FALSE }, .help = "Show this help message" },
 };
 pos_c_argument positional_arguments[127];
 char opt_arguments_count = 1;
@@ -213,7 +213,7 @@ void parse_args(int argc, char* argv[])
         exit(ARG_ERROR_CODE);
     }
 
-    if (arg("-h").b == TRUE)
+    if (arg("help").b == TRUE)
     {
         print_help();
         exit(0);

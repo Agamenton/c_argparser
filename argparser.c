@@ -45,6 +45,8 @@ static int exists(char* s_name, char* l_name);
 // Skips the first dash(es) and returns only the name
 static char* extract_name(char* arg);
 
+// Prints the usage of arguments the program
+static void print_arguments_usage();
 
 static int exists(char* s_name, char* l_name)
 {
@@ -95,6 +97,44 @@ static char* extract_name(char* arg)
     return arg + i;
 }
 
+
+static void print_arguments_usage()
+{
+    char* local_program_name = program_name == NULL ? "program_name" : program_name;
+    printf("Usage: %s ", local_program_name);
+    for (int i = 0; i < pos_arguments_count; i++)
+    {
+        printf("%s ", positional_arguments[i].name);
+    }
+    for (int i = 0; i < opt_arguments_count; i++)
+    {
+        if(optional_arguments[i].type == ARG_BOOL)
+        {
+            printf("[-%s] ", optional_arguments[i].short_name);
+        }
+        else
+        {
+            printf("[-%s VALUE] ", optional_arguments[i].short_name);
+        }
+    }
+    printf("\n");
+    printf("Arguments:\n");
+    for (int i = 0; i < pos_arguments_count; i++)
+    {
+        printf("  %s", positional_arguments[i].name);
+        printf("\n\t%s\n", positional_arguments[i].help);
+    }
+    for (int i = 0; i < opt_arguments_count; i++)
+    {
+        printf("  -%s, --%s", optional_arguments[i].short_name, optional_arguments[i].long_name);
+        if (optional_arguments[i].type != ARG_BOOL)
+        {
+            printf(" VALUE");
+        }
+        printf("\n");
+        printf("\t%s\n", optional_arguments[i].help);
+    }
+}
 
 int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help)
 {
@@ -166,6 +206,7 @@ void parse_args(int argc, char* argv[])
             if (index == -1)
             {
                 fprintf(stderr, "Unknown argument: %s\n", name);
+                print_arguments_usage();
                 exit(ARG_ERROR_CODE);
             }
             if (optional_arguments[index].type == ARG_BOOL)
@@ -178,6 +219,7 @@ void parse_args(int argc, char* argv[])
                 if (arg_idx >= argc)
                 {
                     fprintf(stderr, "Expected value for argument: %s\n", name);
+                    print_arguments_usage();
                     exit(ARG_ERROR_CODE);
                 }
                 char* value = argv[arg_idx];
@@ -200,6 +242,7 @@ void parse_args(int argc, char* argv[])
             if (current_pos_arg >= pos_arguments_count)
             {
                 fprintf(stderr, "Too many positional arguments\n");
+                print_arguments_usage();
                 exit(ARG_ERROR_CODE);
             }
             positional_arguments[current_pos_arg].value.s = current_word;
@@ -210,6 +253,7 @@ void parse_args(int argc, char* argv[])
     if (current_pos_arg < pos_arguments_count)
     {
         fprintf(stderr, "Not enough positional arguments\n");
+        print_arguments_usage();
         exit(ARG_ERROR_CODE);
     }
 
@@ -240,37 +284,5 @@ void print_help()
 
     printf("%s\n", local_program_name);
     printf("%s\n", local_program_dsc);
-    printf("Usage: %s ", local_program_name);
-    for (int i = 0; i < pos_arguments_count; i++)
-    {
-        printf("%s ", positional_arguments[i].name);
-    }
-    for (int i = 0; i < opt_arguments_count; i++)
-    {
-        if(optional_arguments[i].type == ARG_BOOL)
-        {
-            printf("[-%s] ", optional_arguments[i].short_name);
-        }
-        else
-        {
-            printf("[-%s VALUE] ", optional_arguments[i].short_name);
-        }
-    }
-    printf("\n");
-    printf("Arguments:\n");
-    for (int i = 0; i < pos_arguments_count; i++)
-    {
-        printf("  %s", positional_arguments[i].name);
-        printf("\n\t%s\n", positional_arguments[i].help);
-    }
-    for (int i = 0; i < opt_arguments_count; i++)
-    {
-        printf("  -%s, --%s", optional_arguments[i].short_name, optional_arguments[i].long_name);
-        if (optional_arguments[i].type != ARG_BOOL)
-        {
-            printf(" VALUE");
-        }
-        printf("\n");
-        printf("\t%s\n", optional_arguments[i].help);
-    }
+    print_arguments_usage();
 }

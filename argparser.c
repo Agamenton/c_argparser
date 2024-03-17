@@ -102,10 +102,6 @@ static void print_arguments_usage()
 {
     char* local_program_name = program_name == NULL ? "program_name" : program_name;
     printf("Usage: %s ", local_program_name);
-    for (int i = 0; i < pos_arguments_count; i++)
-    {
-        printf("%s ", positional_arguments[i].name);
-    }
     for (int i = 0; i < opt_arguments_count; i++)
     {
         if(optional_arguments[i].type == ARG_BOOL)
@@ -116,6 +112,10 @@ static void print_arguments_usage()
         {
             printf("[-%s VALUE] ", optional_arguments[i].short_name);
         }
+    }
+    for (int i = 0; i < pos_arguments_count; i++)
+    {
+        printf("%s ", positional_arguments[i].name);
     }
     printf("\n");
     printf("Arguments:\n");
@@ -280,7 +280,7 @@ void set_program_name(char* name)
 
 void print_help()
 {
-    char* local_program_name = program_name == NULL ? "program_name" : program_name;
+    char* local_program_name = program_name == NULL ? "<program_name not specified>" : program_name;
     char* local_program_dsc = program_dsc == NULL ? "<No description>" : program_dsc;
 
     printf("%s\n", local_program_name);

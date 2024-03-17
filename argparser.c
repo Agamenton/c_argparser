@@ -197,4 +197,9 @@ void parse_args(int argc, char* argv[])
         }
         arg_idx++;
     }
+    if (current_pos_arg < pos_arguments_count)
+    {
+        fprintf(stderr, "Not enough positional arguments\n");
+        exit(ARG_ERROR_CODE);
+    }
 }

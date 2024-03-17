@@ -50,8 +50,8 @@ static int exists(char* s_name, char* l_name)
 {
     if (find_opt_argument(s_name) != -1 ||
         find_opt_argument(l_name) != -1 ||
-        find_pos_argument(s_name) ||
-        find_pos_argument(l_name))
+        find_pos_argument(s_name) != -1 ||
+        find_pos_argument(l_name) != -1)
     {
         return TRUE;
     }

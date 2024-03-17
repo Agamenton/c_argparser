@@ -23,6 +23,7 @@ typedef struct {
 
 char* program_dsc = NULL;
 char* program_name = NULL;
+char* program_title = NULL;
 
 
 opt_c_argument optional_arguments[127] = {
@@ -194,6 +195,7 @@ arg_value arg(char* name)
 
 void parse_args(int argc, char* argv[])
 {
+    program_name = argv[0];
     int current_pos_arg = 0;
     int arg_idx = 1;
     while(arg_idx < argc)
@@ -274,16 +276,16 @@ void set_program_description(char* dsc)
 
 void set_program_name(char* name)
 {
-    program_name = name;
+    program_title = name;
 }
 
 
 void print_help()
 {
-    char* local_program_name = program_name == NULL ? "<program_name not specified>" : program_name;
+    char* local_program_title = program_title == NULL ? (program_name == NULL ? "<program_name not specified>" : program_name) : program_title;
     char* local_program_dsc = program_dsc == NULL ? "<No description>" : program_dsc;
 
-    printf("%s\n", local_program_name);
+    printf("%s\n", local_program_title);
     printf("%s\n", local_program_dsc);
     print_arguments_usage();
 }

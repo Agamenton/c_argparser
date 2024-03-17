@@ -78,4 +78,18 @@ arg_value arg(char* name);
  */
 void parse_args(int argc, char* argv[]);
 
+
+/**
+ * @brief Set the help message, you don't need to write the usage of arguments, it will be added automatically
+ * @param msg  Help message
+ */
+void set_help_message(char* msg);
+
+
+/**
+ * @brief Print the help message
+ */
+void print_help();
+
+
 #endif //C_ARGPARSER_ARGPARSER_H

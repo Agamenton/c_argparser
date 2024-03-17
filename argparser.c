@@ -249,12 +249,28 @@ void print_help()
     {
         if(optional_arguments[i].type == ARG_BOOL)
         {
-            printf("[%s] ", optional_arguments[i].short_name);
+            printf("[-%s] ", optional_arguments[i].short_name);
         }
         else
         {
-            printf("[%s VALUE] ", optional_arguments[i].short_name);
+            printf("[-%s VALUE] ", optional_arguments[i].short_name);
         }
     }
     printf("\n");
+    printf("Arguments:\n");
+    for (int i = 0; i < pos_arguments_count; i++)
+    {
+        printf("  %s", positional_arguments[i].name);
+        printf("\n\t%s\n", positional_arguments[i].help);
+    }
+    for (int i = 0; i < opt_arguments_count; i++)
+    {
+        printf("  -%s, --%s", optional_arguments[i].short_name, optional_arguments[i].long_name);
+        if (optional_arguments[i].type != ARG_BOOL)
+        {
+            printf(" VALUE");
+        }
+        printf("\n");
+        printf("\t%s\n", optional_arguments[i].help);
+    }
 }

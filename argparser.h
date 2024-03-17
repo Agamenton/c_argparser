@@ -80,10 +80,10 @@ void parse_args(int argc, char* argv[]);
 
 
 /**
- * @brief Set the help message, you don't need to write the usage of arguments, it will be added automatically
- * @param msg  Help message
+ * @brief Set the description/help message, it will be part of the help message
+ * @param dsc  Description of the program
  */
-void set_help_message(char* msg);
+void set_program_description(char* dsc);
 
 
 /**

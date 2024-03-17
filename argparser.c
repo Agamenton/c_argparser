@@ -21,9 +21,15 @@ typedef struct {
 } pos_c_argument;
 
 
-opt_c_argument optional_arguments[127];
-pos_c_argument positional_arguments[127]
-char opt_arguments_count = 0;
+char* program_dsc = NULL;
+char* program_name = NULL;
+
+
+opt_c_argument optional_arguments[127] = {
+        { .short_name = "-h", .long_name = "--help", .type = ARG_BOOL, .value = (arg_value) { .b = FALSE }, .help = "Show this help message" },
+};
+pos_c_argument positional_arguments[127];
+char opt_arguments_count = 1;
 char pos_arguments_count = 0;
 
 
@@ -57,7 +63,7 @@ static int find_opt_argument(char* name)
 {
     for (int i = 0; i < opt_arguments_count; i++)
     {
-        if (strcmp(arguments[i].short_name, name) == 0 || strcmp(arguments[i].long_name, name) == 0)
+        if (strcmp(optional_arguments[i].short_name, name) == 0 || strcmp(optional_arguments[i].long_name, name) == 0)
         {
             return i;
         }
@@ -70,7 +76,7 @@ static int find_pos_argument(char* name)
 {
     for (int i = 0; i < pos_arguments_count; i++)
     {
-        if (strcmp(arguments[i].name, name) == 0)
+        if (strcmp(positional_arguments[i].name, name) == 0)
         {
             return i;
         }
@@ -104,7 +110,7 @@ int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_
     argument.value = default_value;
     argument.help = help;
     argument.optional = TRUE;
-    opt_c_argument[opt_arguments_count] = argument;
+    optional_arguments[opt_arguments_count] = argument;
     opt_arguments_count++;
 
     return opt_arguments_count;
@@ -121,7 +127,7 @@ int add_positional_argument(char* name, char* help)
     pos_c_argument argument;
     argument.name = name;
     argument.help = help;
-    argument.value = NULL;
+    argument.value = (arg_value) { .s = NULL };
     positional_arguments[pos_arguments_count] = argument;
     pos_arguments_count++;
 
@@ -131,14 +137,18 @@ int add_positional_argument(char* name, char* help)
 
 arg_value arg(char* name)
 {
-    int index = find_argument(name);
+    int index = find_opt_argument(name);
     if (index == -1)
     {
-        arg_value value;
-        value.i = -1;
-        return value;
+        index = find_pos_argument(name);
+        if (index == -1)
+        {
+            fprintf(stderr, "Unknown argument: %s\n", name);
+            exit(ARG_ERROR_CODE);
+        }
+        return positional_arguments[index].value;
     }
-    return arguments[index].value;
+    return optional_arguments[index].value;
 }
 
 
@@ -202,4 +212,49 @@ void parse_args(int argc, char* argv[])
         fprintf(stderr, "Not enough positional arguments\n");
         exit(ARG_ERROR_CODE);
     }
+
+    if (arg("-h").b == TRUE)
+    {
+        print_help();
+        exit(0);
+    }
+}
+
+
+void set_program_description(char* dsc)
+{
+    program_dsc = dsc;
+}
+
+
+void set_program_name(char* name)
+{
+    program_name = name;
+}
+
+
+void print_help()
+{
+    char* local_program_name = program_name == NULL ? "program_name" : program_name;
+    char* local_program_dsc = program_dsc == NULL ? "<No description>" : program_dsc;
+
+    printf("%s\n", local_program_name);
+    printf("%s\n", local_program_dsc);
+    printf("Usage: %s ", local_program_name);
+    for (int i = 0; i < pos_arguments_count; i++)
+    {
+        printf("%s ", positional_arguments[i].name);
+    }
+    for (int i = 0; i < opt_arguments_count; i++)
+    {
+        if(optional_arguments[i].type == ARG_BOOL)
+        {
+            printf("[%s] ", optional_arguments[i].short_name);
+        }
+        else
+        {
+            printf("[%s VALUE] ", optional_arguments[i].short_name);
+        }
+    }
+    printf("\n");
 }

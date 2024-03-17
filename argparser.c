@@ -274,7 +274,7 @@ void set_program_description(char* dsc)
 }
 
 
-void set_program_name(char* name)
+void set_program_title(char* name)
 {
     program_title = name;
 }

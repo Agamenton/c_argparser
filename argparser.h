@@ -9,6 +9,9 @@
 #define FALSE 0
 #endif
 
+#ifndef ARG_ERROR_CODE
+#define ARG_ERROR_CODE 55
+#endif
 
 
 /**

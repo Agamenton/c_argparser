@@ -122,7 +122,7 @@ static void print_arguments_usage()
     for (int i = 0; i < pos_arguments_count; i++)
     {
         printf("  %s", positional_arguments[i].name);
-        printf("\n\t%s\n", positional_arguments[i].help);
+        printf("\n\t%s\n\n", positional_arguments[i].help);
     }
     for (int i = 0; i < opt_arguments_count; i++)
     {
@@ -132,7 +132,7 @@ static void print_arguments_usage()
             printf(" VALUE");
         }
         printf("\n");
-        printf("\t%s\n", optional_arguments[i].help);
+        printf("\t%s\n\n", optional_arguments[i].help);
     }
 }
 

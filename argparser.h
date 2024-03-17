@@ -87,6 +87,13 @@ void set_help_message(char* msg);
 
 
 /**
+ * @brief Set the program name, it will be used in the help message
+ * @param name  Program name
+ */
+void set_program_name(char* name);
+
+
+/**
  * @brief Print the help message
  */
 void print_help();

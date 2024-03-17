@@ -45,7 +45,7 @@ typedef union {
  * @param type          Type of the argument any of: ARG_INT, ARG_FLOAT, ARG_STRING, ARG_BOOL
  * @param default_value Default value of the argument (if type is 'bool', then if the argument is used it will invert the default value)
  * @param help          Help message to display when --help is used
- * @return              Amount of existing arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
+ * @return              Amount of existing optional arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
  */
 int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help);
 
@@ -55,7 +55,7 @@ int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_
  * The order of positional arguments is important
  * @param name          Name of the argument
  * @param help          Help message to display when --help is used
- * @return              Amount of existing arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
+ * @return              Amount of existing positional arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
  */
 int add_positional_argument(char* name, char* help);
 

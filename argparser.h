@@ -42,6 +42,15 @@ typedef union {
 
 
 /**
+ * @brief Used to specify the rule type of new rule
+ */
+typedef enum {
+    ARG_EXCLUSIVE,
+    ARG_REQUIRES
+} arg_rule;
+
+
+/**
  * @brief Add an argument to the parser
  * @param short_name    Short name of the argument (e.g. "d") do not use the '-' character
  * @param long_name     Long name of the argument (e.g. "debug") do not use the '--' characters
@@ -97,6 +106,18 @@ void set_program_title(char* name);
  * @brief Print the help message
  */
 void print_help();
+
+
+/**
+ * @brief Creates new rule for input arguments\n
+ * Only optional arguments can have rules assigned!
+ * @param arg1  First argument
+ * @param rule  Rule type:\n
+ * ARG_EXCLUSIVE: arg1 and arg2 cannot be used together\n
+ * ARG_REQUIRES: arg1 requires arg2 to be used
+ * @param arg2  Second argument
+ */
+void set_rule(char* arg1, arg_rule rule, char* arg2);
 
 
 #endif //C_ARGPARSER_ARGPARSER_H

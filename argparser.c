@@ -10,7 +10,7 @@ typedef struct {
     arg_type type;
     arg_value value;
     char* help;
-    char optional;
+    char used;
 } opt_c_argument;
 
 
@@ -19,6 +19,13 @@ typedef struct {
     char* help;
     arg_value value;
 } pos_c_argument;
+
+
+typedef struct {
+    char* arg1_name;
+    char* arg2_name;
+    arg_rule rule;
+} arg_rule_t;
 
 
 char* program_dsc = NULL;
@@ -32,6 +39,9 @@ opt_c_argument optional_arguments[127] = {
 pos_c_argument positional_arguments[127];
 char opt_arguments_count = 1;
 char pos_arguments_count = 0;
+
+arg_rule_t rules[127];
+char rules_count = 0;
 
 
 // Private function to find index of an optional argument by name
@@ -48,6 +58,47 @@ static char* extract_name(char* arg);
 
 // Prints the usage of arguments the program
 static void print_arguments_usage();
+
+// After parsing the arguments, checks if the rules are satisfied
+// Returns index of a broken rule or -1 if no rule is broken
+static int check_rules();
+
+
+static int check_rules()
+{
+    for(char i = 0; i < rules_count; i++)
+    {
+        arg_rule_t rule = rules[i];
+        int arg1_index = find_opt_argument(rule.arg1_name);
+        int arg2_index = find_opt_argument(rule.arg2_name);
+        if (arg1_index == -1)
+        {
+            fprintf(stderr, "|WRN| check_rules: Unknown argument, skipping %s\n", rule.arg1_name);
+            continue;
+        }
+        if (arg2_index == -1)
+        {
+            fprintf(stderr, "|WRN| check_rules: Unknown argument, skipping %s\n", rule.arg2_name);
+            continue;
+        }
+        if (rule.rule == ARG_EXCLUSIVE)
+        {
+            if (optional_arguments[arg1_index].used && optional_arguments[arg2_index].used)
+            {
+                return i;
+            }
+        }
+        else if (rule.rule == ARG_REQUIRES)
+        {
+            if (optional_arguments[arg1_index].used && !optional_arguments[arg2_index].used)
+            {
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
 
 static int exists(char* s_name, char* l_name)
 {
@@ -150,7 +201,7 @@ int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_
     argument.type = type;
     argument.value = default_value;
     argument.help = help;
-    argument.optional = TRUE;
+    argument.used = FALSE;
     optional_arguments[opt_arguments_count] = argument;
     opt_arguments_count++;
 
@@ -238,6 +289,7 @@ void parse_args(int argc, char* argv[])
                     optional_arguments[index].value.s = value;
                 }
             }
+            optional_arguments[index].used = TRUE;
         }
         else
         {
@@ -265,6 +317,14 @@ void parse_args(int argc, char* argv[])
         print_arguments_usage();
         exit(ARG_ERROR_CODE);
     }
+
+    int rule_error = check_rules();
+    if (rule_error != -1)
+    {
+        fprintf(stderr, "Rules not satisfied\n");
+        print_arguments_usage();
+        exit(ARG_ERROR_CODE);
+    }
 }
 
 
@@ -288,4 +348,18 @@ void print_help()
     printf("%s\n", local_program_title);
     printf("%s\n", local_program_dsc);
     print_arguments_usage();
+}
+
+
+void set_rule(char* arg1_name, arg_rule rule, char* arg2_name)
+{
+    if (rules_count >= 127)
+    {
+        fprintf(stderr, "Too many rules\n");
+        exit(ARG_ERROR_CODE);
+    }
+    rules[rules_count].arg1_name = arg1_name;
+    rules[rules_count].rule = rule;
+    rules[rules_count].arg2_name = arg2_name;
+    rules_count++;
 }

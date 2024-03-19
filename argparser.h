@@ -21,8 +21,8 @@
 #define MAX_POS_ARGUMENTS 127
 #endif
 
-#ifndef MAX_RULES
-#define MAX_RULES 127
+#ifndef MAX_ARG_RULES
+#define MAX_ARG_RULES 127
 #endif
 
 

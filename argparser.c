@@ -40,7 +40,7 @@ pos_c_argument positional_arguments[MAX_POS_ARGUMENTS];
 char opt_arguments_count = 1;
 char pos_arguments_count = 0;
 
-arg_rule_t rules[MAX_RULES];
+arg_rule_t rules[MAX_ARG_RULES];
 char rules_count = 0;
 
 
@@ -353,7 +353,7 @@ void print_help()
 
 void set_rule(char* arg1_name, arg_rule rule, char* arg2_name)
 {
-    if (rules_count >= MAX_RULES)
+    if (rules_count >= MAX_ARG_RULES)
     {
         fprintf(stderr, "Too many rules\n");
         exit(ARG_ERROR_CODE);

@@ -33,14 +33,14 @@ char* program_name = NULL;
 char* program_title = NULL;
 
 
-opt_c_argument optional_arguments[127] = {
+opt_c_argument optional_arguments[MAX_OPT_ARGUMENTS] = {
         { .short_name = "h", .long_name = "help", .type = ARG_BOOL, .value = (arg_value) { .b = FALSE }, .help = "Show this help message" },
 };
-pos_c_argument positional_arguments[127];
+pos_c_argument positional_arguments[MAX_POS_ARGUMENTS];
 char opt_arguments_count = 1;
 char pos_arguments_count = 0;
 
-arg_rule_t rules[127];
+arg_rule_t rules[MAX_RULES];
 char rules_count = 0;
 
 
@@ -190,7 +190,7 @@ static void print_arguments_usage()
 
 int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help)
 {
-    if (opt_arguments_count >= 127 || exists(short_name, long_name) == TRUE)    // explicit comparison with TRUE in case TRUE is defined as 0
+    if (opt_arguments_count >= MAX_OPT_ARGUMENTS || exists(short_name, long_name) == TRUE)    // explicit comparison with TRUE in case TRUE is defined as 0
     {
         return -1;
     }
@@ -211,7 +211,7 @@ int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_
 
 int add_positional_argument(char* name, char* help)
 {
-    if (pos_arguments_count >= 127 || exists(name, name) == TRUE)
+    if (pos_arguments_count >= MAX_POS_ARGUMENTS || exists(name, name) == TRUE)
     {
         return -1;
     }
@@ -353,7 +353,7 @@ void print_help()
 
 void set_rule(char* arg1_name, arg_rule rule, char* arg2_name)
 {
-    if (rules_count >= 127)
+    if (rules_count >= MAX_RULES)
     {
         fprintf(stderr, "Too many rules\n");
         exit(ARG_ERROR_CODE);

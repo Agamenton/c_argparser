@@ -13,6 +13,18 @@
 #define ARG_ERROR_CODE 55
 #endif
 
+#ifndef MAX_OPT_ARGUMENTS
+#define MAX_OPT_ARGUMENTS 127
+#endif
+
+#ifndef MAX_POS_ARGUMENTS
+#define MAX_POS_ARGUMENTS 127
+#endif
+
+#ifndef MAX_RULES
+#define MAX_RULES 127
+#endif
+
 
 /**
  * @brief Type of the argument used when adding an argument to the parser

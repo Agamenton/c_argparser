@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     ap_add_opt_argument("d", "decompress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to de-compress a .lz77 file");
     ap_add_opt_argument("o", "output", ARG_STRING, (arg_value) { .s = "output.lz77" }, "Relative or full path to the output file");
     ap_add_opt_argument("w", "window", ARG_INT, (arg_value) { .i = 255 }, "Size of the sliding window");
-    ap_add_pos_argument("input", "Relative or full path to the input file you want to compress/decompress");
+    ap_add_pos_argument("input", ARG_STRING, "Relative or full path to the input file you want to compress/decompress");
     ap_set_rule("c", ARG_EXCLUSIVE, "d");
     ap_parse_args(argc, argv);
     
@@ -49,23 +49,32 @@ output:
 ```
 LZ77 compression/decompression program
 This is a simple program to compress and decompress files using the LZ77 algorithm
-Usage: lz77.o [-h] [-c] [-d] [-o VALUE] [-w VALUE] input
+Usage: a.o [-h] [-c] [-d] [-o VALUE] [-w VALUE] input
 Arguments:
   input
+        (string)
         Relative or full path to the input file you want to compress/decompress
 
   -h, --help
+        (flag)
         Show this help message
 
   -c, --compress
+        (flag)
         Choose this to compress the input file
 
   -d, --decompress
+        (flag)
         Choose this to de-compress a .lz77 file
 
   -o, --output VALUE
+        (string)
         Relative or full path to the output file
 
   -w, --window VALUE
+        (int)
         Size of the sliding window
+
+Rules:
+        'c' EXCLUSIVE 'd'
 ```

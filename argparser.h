@@ -78,10 +78,11 @@ int ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_va
  * @brief Add a positional argument to the parser \n
  * The order of positional arguments is important
  * @param name          Name of the argument
+ * @param type          Expected type of the argument any of: ARG_INT, ARG_FLOAT, ARG_STRING
  * @param help          Help message to display when --help is used
  * @return              Amount of existing positional arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
  */
-int ap_add_pos_argument(char* name, char* help);
+int ap_add_pos_argument(char* name, arg_type type, char* help);
 
 
 /**

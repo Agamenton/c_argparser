@@ -17,6 +17,7 @@ typedef struct {
 typedef struct {
     char* name;
     char* help;
+    arg_type type;
     arg_value value;
 } pos_c_argument;
 
@@ -58,6 +59,11 @@ static char* extract_name(char* arg);
 
 // Prints the usage of arguments the program
 static void print_arguments_usage();
+
+static void print_rules();
+
+// helper for printing expected argument type
+static char* type_switch(arg_type type);
 
 // After parsing the arguments, checks if the rules are satisfied
 // Returns index of a broken rule or -1 if no rule is broken
@@ -149,6 +155,22 @@ static char* extract_name(char* arg)
     return arg + i;
 }
 
+static char* type_switch(arg_type type)
+{
+    switch (type)
+    {
+        case ARG_BOOL:
+            return "flag";
+        case ARG_INT:
+            return "int";
+        case ARG_STRING:
+            return "string";
+        case ARG_FLOAT:
+            return "float";
+        default:
+            return "unknown";
+    }
+}
 
 static void print_arguments_usage()
 {
@@ -170,11 +192,12 @@ static void print_arguments_usage()
         printf("%s ", positional_arguments[i].name);
     }
     printf("\n");
+
     printf("Arguments:\n");
     for (int i = 0; i < pos_arguments_count; i++)
     {
         printf("  %s", positional_arguments[i].name);
-        printf("\n\t%s\n\n", positional_arguments[i].help);
+        printf("\n\t(%s)\n\t%s\n\n", type_switch(positional_arguments[i].type), positional_arguments[i].help);
     }
     for (int i = 0; i < opt_arguments_count; i++)
     {
@@ -183,8 +206,18 @@ static void print_arguments_usage()
         {
             printf(" VALUE");
         }
+        printf("\n\t(%s)", type_switch(optional_arguments[i].type));
         printf("\n");
         printf("\t%s\n\n", optional_arguments[i].help);
+    }
+}
+
+static void print_rules()
+{
+    printf("Rules:\n");
+    for (int i = 0; i < rules_count; i++)
+    {
+        printf("\t'%s' %s '%s'\n\n", rules[i].arg1_name, rules[i].rule == ARG_EXCLUSIVE ? "EXCLUSIVE" : "REQUIRES", rules[i].arg2_name);
     }
 }
 
@@ -209,7 +242,7 @@ int ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_va
 }
 
 
-int ap_add_pos_argument(char* name, char* help)
+int ap_add_pos_argument(char* name, arg_type type, char* help)
 {
     if (pos_arguments_count >= MAX_POS_ARGUMENTS || exists(name, name) == TRUE)
     {
@@ -219,6 +252,7 @@ int ap_add_pos_argument(char* name, char* help)
     pos_c_argument argument;
     argument.name = name;
     argument.help = help;
+    argument.type = type;
     argument.value = (arg_value) { .s = NULL };
     positional_arguments[pos_arguments_count] = argument;
     pos_arguments_count++;
@@ -299,7 +333,19 @@ void ap_parse_args(int argc, char* argv[])
                 print_arguments_usage();
                 exit(ARG_ERROR_CODE);
             }
-            positional_arguments[current_pos_arg].value.s = current_word;
+            char* value = current_word;
+            if (positional_arguments[current_pos_arg].type == ARG_INT)
+            {
+                positional_arguments[current_pos_arg].value.i = atoi(value);
+            }
+            else if (positional_arguments[current_pos_arg].type == ARG_FLOAT)
+            {
+                positional_arguments[current_pos_arg].value.f = atof(value);
+            }
+            else if (positional_arguments[current_pos_arg].type == ARG_STRING)
+            {
+                positional_arguments[current_pos_arg].value.s = value;
+            }
             current_pos_arg++;
         }
         arg_idx++;
@@ -348,6 +394,7 @@ void ap_print_help()
     printf("%s\n", local_program_title);
     printf("%s\n", local_program_dsc);
     print_arguments_usage();
+    print_rules();
 }
 
 

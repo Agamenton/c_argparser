@@ -188,7 +188,7 @@ static void print_arguments_usage()
     }
 }
 
-int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help)
+int ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help)
 {
     if (opt_arguments_count >= MAX_OPT_ARGUMENTS || exists(short_name, long_name) == TRUE)    // explicit comparison with TRUE in case TRUE is defined as 0
     {
@@ -209,7 +209,7 @@ int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_
 }
 
 
-int add_positional_argument(char* name, char* help)
+int ap_add_pos_argument(char* name, char* help)
 {
     if (pos_arguments_count >= MAX_POS_ARGUMENTS || exists(name, name) == TRUE)
     {
@@ -244,7 +244,7 @@ arg_value arg(char* name)
 }
 
 
-void parse_args(int argc, char* argv[])
+void ap_parse_args(int argc, char* argv[])
 {
     program_name = argv[0];
     int current_pos_arg = 0;
@@ -307,7 +307,7 @@ void parse_args(int argc, char* argv[])
 
     if (arg("help").b == TRUE)
     {
-        print_help();
+        ap_print_help();
         exit(0);
     }
 
@@ -328,19 +328,19 @@ void parse_args(int argc, char* argv[])
 }
 
 
-void set_program_description(char* dsc)
+void ap_set_program_description(char* dsc)
 {
     program_dsc = dsc;
 }
 
 
-void set_program_title(char* name)
+void ap_set_program_title(char* name)
 {
     program_title = name;
 }
 
 
-void print_help()
+void ap_print_help()
 {
     char* local_program_title = program_title == NULL ? (program_name == NULL ? "<program_name not specified>" : program_name) : program_title;
     char* local_program_dsc = program_dsc == NULL ? "<No description>" : program_dsc;
@@ -351,15 +351,15 @@ void print_help()
 }
 
 
-void set_rule(char* arg1_name, arg_rule rule, char* arg2_name)
+void ap_set_rule(char* arg1, arg_rule rule, char* arg2)
 {
     if (rules_count >= MAX_ARG_RULES)
     {
         fprintf(stderr, "Too many rules\n");
         exit(ARG_ERROR_CODE);
     }
-    rules[rules_count].arg1_name = arg1_name;
+    rules[rules_count].arg1_name = arg1;
     rules[rules_count].rule = rule;
-    rules[rules_count].arg2_name = arg2_name;
+    rules[rules_count].arg2_name = arg2;
     rules_count++;
 }

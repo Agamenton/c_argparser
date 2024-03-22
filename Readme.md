@@ -14,14 +14,26 @@ Code:
 
 int main(int argc, char *argv[]) {
     // argparser setup 
-    set_program_name("lz77.o");
-    set_program_description("This is a simple program to compress and decompress files using the LZ77 algorithm");
-    add_optional_argument("c", "compress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to compress the input file");
-    add_optional_argument("d", "decompress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to de-compress a .lz77 file");
-    add_optional_argument("o", "output", ARG_STRING, (arg_value) { .s = "output.lz77" }, "Relative or full path to the output file");
-    add_optional_argument("w", "window", ARG_INT, (arg_value) { .i = 255 }, "Size of the sliding window");
-    add_positional_argument("input", "Relative or full path to the input file you want to compress/decompress");
-    parse_args(argc, argv);
+    ap_set_program_title("LZ77 compression/decompression program");
+    ap_set_program_description("This is a simple program to compress and decompress files using the LZ77 algorithm");
+    ap_add_opt_argument("c", "compress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to compress the input file");
+    ap_add_opt_argument("d", "decompress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to de-compress a .lz77 file");
+    ap_add_opt_argument("o", "output", ARG_STRING, (arg_value) { .s = "output.lz77" }, "Relative or full path to the output file");
+    ap_add_opt_argument("w", "window", ARG_INT, (arg_value) { .i = 255 }, "Size of the sliding window");
+    ap_add_pos_argument("input", "Relative or full path to the input file you want to compress/decompress");
+    ap_set_rule("c", ARG_EXCLUSIVE, "d");
+    ap_parse_args(argc, argv);
+    
+    if (arg("c").b){
+        compress_file(arg("input").s, arg("output").s, arg("window").i);
+    }
+    else if (arg("d").b){
+        decompress_file(arg("input").s, arg("output").s);
+    }
+    else {
+        printf("No action specified\n");
+        ap_print_help();
+    }
 
     return 0;
 }
@@ -35,7 +47,7 @@ lz77.o -h
 
 output:
 ```
-lz77.o
+LZ77 compression/decompression program
 This is a simple program to compress and decompress files using the LZ77 algorithm
 Usage: lz77.o [-h] [-c] [-d] [-o VALUE] [-w VALUE] input
 Arguments:

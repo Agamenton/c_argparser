@@ -71,7 +71,7 @@ typedef enum {
  * @param help          Help message to display when --help is used
  * @return              Amount of existing optional arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
  */
-int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help);
+int ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help);
 
 
 /**
@@ -81,7 +81,7 @@ int add_optional_argument(char* short_name, char* long_name, arg_type type, arg_
  * @param help          Help message to display when --help is used
  * @return              Amount of existing positional arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
  */
-int add_positional_argument(char* name, char* help);
+int ap_add_pos_argument(char* name, char* help);
 
 
 /**
@@ -97,27 +97,27 @@ arg_value arg(char* name);
  * @param argc  Number of arguments
  * @param argv  Array of arguments
  */
-void parse_args(int argc, char* argv[]);
+void ap_parse_args(int argc, char* argv[]);
 
 
 /**
  * @brief Set the description/help message, it will be part of the help message
  * @param dsc  Description of the program
  */
-void set_program_description(char* dsc);
+void ap_set_program_description(char* dsc);
 
 
 /**
  * @brief Set the program name, it will be used in the help message
  * @param name  Program name
  */
-void set_program_title(char* name);
+void ap_set_program_title(char* name);
 
 
 /**
  * @brief Print the help message
  */
-void print_help();
+void ap_print_help();
 
 
 /**
@@ -129,7 +129,7 @@ void print_help();
  * ARG_REQUIRES: arg1 requires arg2 to be used
  * @param arg2  Second argument
  */
-void set_rule(char* arg1, arg_rule rule, char* arg2);
+void ap_set_rule(char* arg1, arg_rule rule, char* arg2);
 
 
 #endif //C_ARGPARSER_ARGPARSER_H

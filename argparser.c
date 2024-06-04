@@ -44,6 +44,75 @@ char pos_arguments_count = 0;
 arg_rule_t rules[MAX_ARG_RULES];
 char rules_count = 0;
 
+/**
+ * @brief Add an argument to the parser
+ * @param short_name    Short name of the argument (e.g. "d") do not use the '-' character
+ * @param long_name     Long name of the argument (e.g. "debug") do not use the '--' characters
+ * @param type          Type of the argument any of: ARG_INT, ARG_FLOAT, ARG_STRING, ARG_BOOL
+ * @param default_value Default value of the argument (if type is 'bool', then if the argument is used it will invert the default value)
+ * @param help          Help message to display when --help is used
+ * @return              Amount of existing optional arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
+ */
+static int _ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help);
+
+
+/**
+ * @brief Add a positional argument to the parser \n
+ * The order of positional arguments is important
+ * @param name          Name of the argument
+ * @param type          Expected type of the argument any of: ARG_INT, ARG_FLOAT, ARG_STRING
+ * @param help          Help message to display when --help is used
+ * @return              Amount of existing positional arguments (after adding) or -1 if the maximum is reached 127 or -1 if argument already exists
+ */
+static int _ap_add_pos_argument(char* name, arg_type type, char* help);
+
+
+/**
+ * @brief Get the value of an argument
+ * @param name  Name of the argument
+ * @return      Value of the argument
+ */
+static arg_value _arg(char* name);
+
+
+/**
+ * @brief Parse the arguments
+ * @param argc  Number of arguments
+ * @param argv  Array of arguments
+ */
+static void _ap_parse_args(int argc, char* argv[]);
+
+
+/**
+ * @brief Set the description/help message, it will be part of the help message
+ * @param dsc  Description of the program
+ */
+static void _ap_set_program_description(char* dsc);
+
+
+/**
+ * @brief Set the program name, it will be used in the help message
+ * @param name  Program name
+ */
+static void _ap_set_program_title(char* name);
+
+
+/**
+ * @brief Print the help message
+ */
+static void _ap_print_help();
+
+
+/**
+ * @brief Creates new rule for input arguments\n
+ * Only optional arguments can have rules assigned!
+ * @param arg1  First argument
+ * @param rule  Rule type:\n
+ * ARG_EXCLUSIVE: arg1 and arg2 cannot be used together\n
+ * ARG_REQUIRES: arg1 requires arg2 to be used
+ * @param arg2  Second argument
+ */
+static void _ap_set_rule(char* arg1, arg_rule rule, char* arg2);
 
 // Private function to find index of an optional argument by name
 static int find_opt_argument(char* name);
@@ -221,7 +290,7 @@ static void print_rules()
     }
 }
 
-int ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help)
+static int _ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help)
 {
     if (opt_arguments_count >= MAX_OPT_ARGUMENTS || exists(short_name, long_name) == TRUE)    // explicit comparison with TRUE in case TRUE is defined as 0
     {
@@ -242,7 +311,7 @@ int ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_va
 }
 
 
-int ap_add_pos_argument(char* name, arg_type type, char* help)
+static int _ap_add_pos_argument(char* name, arg_type type, char* help)
 {
     if (pos_arguments_count >= MAX_POS_ARGUMENTS || exists(name, name) == TRUE)
     {
@@ -261,7 +330,7 @@ int ap_add_pos_argument(char* name, arg_type type, char* help)
 }
 
 
-arg_value arg(char* name)
+static arg_value _arg(char* name)
 {
     int index = find_opt_argument(name);
     if (index == -1)
@@ -278,7 +347,7 @@ arg_value arg(char* name)
 }
 
 
-void ap_parse_args(int argc, char* argv[])
+static void _ap_parse_args(int argc, char* argv[])
 {
     program_name = argv[0];
     int current_pos_arg = 0;
@@ -351,9 +420,9 @@ void ap_parse_args(int argc, char* argv[])
         arg_idx++;
     }
 
-    if (arg("help").b == TRUE)
+    if (_arg("help").b == TRUE)
     {
-        ap_print_help();
+        _ap_print_help();
         exit(0);
     }
 
@@ -374,19 +443,19 @@ void ap_parse_args(int argc, char* argv[])
 }
 
 
-void ap_set_program_description(char* dsc)
+static void _ap_set_program_description(char* dsc)
 {
     program_dsc = dsc;
 }
 
 
-void ap_set_program_title(char* name)
+static void _ap_set_program_title(char* name)
 {
     program_title = name;
 }
 
 
-void ap_print_help()
+static void _ap_print_help()
 {
     char* local_program_title = program_title == NULL ? (program_name == NULL ? "<program_name not specified>" : program_name) : program_title;
     char* local_program_dsc = program_dsc == NULL ? "<No description>" : program_dsc;
@@ -398,7 +467,7 @@ void ap_print_help()
 }
 
 
-void ap_set_rule(char* arg1, arg_rule rule, char* arg2)
+static void _ap_set_rule(char* arg1, arg_rule rule, char* arg2)
 {
     if (rules_count >= MAX_ARG_RULES)
     {
@@ -409,4 +478,19 @@ void ap_set_rule(char* arg1, arg_rule rule, char* arg2)
     rules[rules_count].rule = rule;
     rules[rules_count].arg2_name = arg2;
     rules_count++;
+}
+
+
+Argparser Argparser_new()
+{
+    Argparser ap;
+    ap.add_opt_argument = _ap_add_opt_argument;
+    ap.add_pos_argument = _ap_add_pos_argument;
+    ap.arg = _arg;
+    ap.parse_args = _ap_parse_args;
+    ap.set_program_description = _ap_set_program_description;
+    ap.set_program_title = _ap_set_program_title;
+    ap.print_help = _ap_print_help;
+    ap.set_rule = _ap_set_rule;
+    return ap;
 }

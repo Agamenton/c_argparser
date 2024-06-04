@@ -14,25 +14,26 @@ Code:
 
 int main(int argc, char *argv[]) {
     // argparser setup 
-    ap_set_program_title("LZ77 compression/decompression program");
-    ap_set_program_description("This is a simple program to compress and decompress files using the LZ77 algorithm");
-    ap_add_opt_argument("c", "compress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to compress the input file");
-    ap_add_opt_argument("d", "decompress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to de-compress a .lz77 file");
-    ap_add_opt_argument("o", "output", ARG_STRING, (arg_value) { .s = "output.lz77" }, "Relative or full path to the output file");
-    ap_add_opt_argument("w", "window", ARG_INT, (arg_value) { .i = 255 }, "Size of the sliding window");
-    ap_add_pos_argument("input", ARG_STRING, "Relative or full path to the input file you want to compress/decompress");
-    ap_set_rule("c", ARG_EXCLUSIVE, "d");
-    ap_parse_args(argc, argv);
+    Argparser ap = Argparser_new();
+    ap.set_program_title("LZ77 compression/decompression program");
+    ap.set_program_description("This is a simple program to compress and decompress files using the LZ77 algorithm");
+    ap.add_opt_argument("c", "compress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to compress the input file");
+    ap.add_opt_argument("d", "decompress", ARG_BOOL, (arg_value) { .b = FALSE }, "Choose this to de-compress a .lz77 file");
+    ap.add_opt_argument("o", "output", ARG_STRING, (arg_value) { .s = "output.lz77" }, "Relative or full path to the output file");
+    ap.add_opt_argument("w", "window", ARG_INT, (arg_value) { .i = 255 }, "Size of the sliding window");
+    ap.add_pos_argument("input", ARG_STRING, "Relative or full path to the input file you want to compress/decompress");
+    ap.set_rule("c", ARG_EXCLUSIVE, "d");
+    ap.parse_args(argc, argv);
     
-    if (arg("c").b){
-        compress_file(arg("input").s, arg("output").s, arg("window").i);
+    if (ap.arg("c").b){
+        compress_file(ap.arg("input").s, ap.arg("output").s, ap.arg("window").i);
     }
-    else if (arg("d").b){
-        decompress_file(arg("input").s, arg("output").s);
+    else if (ap.arg("d").b){
+        decompress_file(ap.arg("input").s, ap.arg("output").s);
     }
     else {
         printf("No action specified\n");
-        ap_print_help();
+        ap.print_help();
     }
 
     return 0;

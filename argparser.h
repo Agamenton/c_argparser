@@ -14,14 +14,17 @@
 #endif
 
 #ifndef MAX_OPT_ARGUMENTS
+// value of this macro must be <= 255
 #define MAX_OPT_ARGUMENTS 127
 #endif
 
 #ifndef MAX_POS_ARGUMENTS
+// value of this macro must be <= 255
 #define MAX_POS_ARGUMENTS 127
 #endif
 
 #ifndef MAX_ARG_RULES
+// value of this macro must be <= 255
 #define MAX_ARG_RULES 127
 #endif
 

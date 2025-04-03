@@ -38,11 +38,11 @@ opt_c_argument optional_arguments[MAX_OPT_ARGUMENTS] = {
         { .short_name = "h", .long_name = "help", .type = ARG_BOOL, .value = (arg_value) { .b = FALSE }, .help = "Show this help message" },
 };
 pos_c_argument positional_arguments[MAX_POS_ARGUMENTS];
-char opt_arguments_count = 1;
-char pos_arguments_count = 0;
+unsigned char opt_arguments_count = 1;
+unsigned char pos_arguments_count = 0;
 
 arg_rule_t rules[MAX_ARG_RULES];
-char rules_count = 0;
+unsigned char rules_count = 0;
 
 
 static int ap_add_opt_argument(char* short_name, char* long_name, arg_type type, arg_value default_value, char* help);
@@ -95,7 +95,7 @@ static int check_rules();
 
 static int check_rules()
 {
-    for(char i = 0; i < rules_count; i++)
+    for(unsigned char i = 0; i < rules_count; i++)
     {
         arg_rule_t rule = rules[i];
         int arg1_index = find_opt_argument(rule.arg1_name);
